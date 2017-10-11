@@ -23,15 +23,14 @@ public class User {
     private String login;
     
     public User() {
-		// TODO Auto-generated constructor stub
 	}
     
   	public User(Long userId, String name, String lastName, String pwd, String login) {
-  		this.setUserId(userId);
-  		this.setName(name);
-  		this.setLastName(lastName);
-  		this.setLogin(login);
-  		this.setPassword(pwd);
+  		this.userId = userId;
+  		this.name = name;
+  		this.lastName = lastName;
+  		this.login = login;
+  		this.password =pwd;
   	}
 
     public Long getUserId() {
