@@ -1,6 +1,7 @@
 buildscript {
 	ext {
 		springBootVersion = '2.0.0.M2'
+		project.group = 'com.pache.igscheduleuser'
 	}
 	repositories {
 		mavenCentral()
@@ -9,18 +10,26 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.11'
+    }
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'info.solidsoft.pitest'
 
 jar {
 	baseName = 'igschedule'
 	version = '0.0.1-SNAPSHOT'
 
+}
+pitest {
+	//targetClasses = ['our.base.package.*']  //by default "${project.group}.*"
+    //pitestVersion = "1.1.0" //not needed when a default PIT version should be used
+    threads = 4
+    outputFormats = ['XML', 'HTML']
 }
 
 sourceCompatibility = 1.8
