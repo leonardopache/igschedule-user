@@ -19,16 +19,32 @@ public class UserList {
 	
 	private List<User> userList = new ArrayList<>();
 
+	public UserList() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	public UserList(List<com.pache.igscheduleuser.entity.User> users) {
+		List<User> embededUserList = new ArrayList<>();
 		for (com.pache.igscheduleuser.entity.User userItem : users) {
 			User user = new User();
 			user.setName(userItem.getName());
 			user.setLastName(userItem.getLastName());
 			user.add(ControllerLinkBuilder.linkTo(UserController.class).slash(userItem.getUserId().toString()).withSelfRel());
-			userList.add(user);
+			embededUserList.add(user);
 		}
+		setUserList(embededUserList);
 	}
 	
+	public UserList(com.pache.igscheduleuser.entity.User user) {
+		List<User> embededUserList = new ArrayList<>();
+		User embededUser = new User();
+		embededUser.setName(user.getName());
+		embededUser.setLastName(user.getLastName());
+		embededUser.add(ControllerLinkBuilder.linkTo(UserController.class).slash(user.getUserId().toString()).withSelfRel());
+		embededUserList.add(embededUser);
+		setUserList(embededUserList);
+	}
+
 	public List<User> getUserList() {
 		return userList;
 	}
@@ -37,9 +53,12 @@ public class UserList {
 		this.userList = userList;
 	}
 
-	public class User extends ResourceSupport {
+	public static class User extends ResourceSupport {
 		private String name;
 		private String lastName;
+		
+		public User() {
+		}
 		
 		public String getName() {
 			return name;
