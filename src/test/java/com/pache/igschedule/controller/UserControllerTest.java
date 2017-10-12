@@ -59,7 +59,7 @@ public class UserControllerTest {
 
 	@Test
 	public void isControllerAlive() throws Exception {
-		assertThat(mvc.perform(MockMvcRequestBuilders.get("/users/base"))
+		assertThat(mvc.perform(MockMvcRequestBuilders.get("/api/user/base"))
 				.andReturn()	.getResponse().getStatus())
 				.isEqualTo(200);
 	}
@@ -70,7 +70,7 @@ public class UserControllerTest {
 		
 		MvcResult getResult = mvc
 				.perform(
-						MockMvcRequestBuilders.get("/users/all")
+						MockMvcRequestBuilders.get("/api/user/all")
 						)
 				.andExpect(status().is(200))
 				.andReturn();
@@ -78,7 +78,7 @@ public class UserControllerTest {
 		String content = getResult.getResponse().getContentAsString();
 		UserList userList = new ObjectMapper().readValue(content, UserList.class);
 		
-		assertThat((long) userList.getUserList().size()).isEqualTo(countUsers);
+		assertThat((long) userList.getUsers().size()).isEqualTo(countUsers);
 	}
 
 	@Test
@@ -87,7 +87,7 @@ public class UserControllerTest {
 		
 		MvcResult getResult = mvc
 				.perform(
-						MockMvcRequestBuilders.get("/users/" + user.getName())
+						MockMvcRequestBuilders.get("/api/user/name/" + user.getName())
 						)
 				.andExpect(status().is(200))
 				.andReturn();
@@ -95,14 +95,14 @@ public class UserControllerTest {
 		String content = getResult.getResponse().getContentAsString();
 		UserList userList = new ObjectMapper().readValue(content, UserList.class);
 		
-		assertThat(user.getName()).isEqualTo(userList.getUserList().get(0).getName());
+		assertThat(user.getName()).isEqualTo(userList.getUsers().get(0).getName());
 	}
 	
 	@Test
 	public void getUserById() throws Exception {
 		MvcResult getResult = mvc
 				.perform(
-						MockMvcRequestBuilders.get("/user/2")
+						MockMvcRequestBuilders.get("/api/user/id/2")
 						)
 				.andExpect(status().is(200))
 				.andReturn();
@@ -110,21 +110,21 @@ public class UserControllerTest {
 		String content = getResult.getResponse().getContentAsString();
 		UserList userList = new ObjectMapper().readValue(content, UserList.class);
 		
-		assertNotNull(userList.getUserList().get(0));
+		assertNotNull(userList.getUsers().get(0));
 	}
 
 	@Test
 	public void postUser() throws Exception {
-		UserCommand newUser = new UserCommand(null, "New Name", "lastName", "pwd", "lgUser");
+		UserCommand newUser = new UserCommand("New Name", "lastName", "pwd", "lgUser");
 		long countUserBeforePost = repository.count();
 
 		mvc.perform(
 						MockMvcRequestBuilders
-						.post("/user/add")
+						.post("/api/user/add")
 						.contentType(MediaType.APPLICATION_JSON_VALUE)
 						.content(new ObjectMapper().writeValueAsString(newUser))
 						)
-				.andExpect(status().is(201)) //Created
+				.andExpect(status().is(200)) //Created
 				.andReturn();
 
 		assertThat(repository.count()).isNotEqualTo(countUserBeforePost);
@@ -132,16 +132,16 @@ public class UserControllerTest {
 	
 	@Test
 	public void updateUser() throws Exception {
-		UserCommand newUser = new UserCommand(1l, "Update Name", "lastName", "pwd", "lgUser");
+		UserCommand newUser = new UserCommand("Update Name", "lastName", "pwd", "lgUser");
 		long countUserBeforePost = repository.count();
 
 		mvc.perform(
 				MockMvcRequestBuilders
-				.put("/user/1/add")
+				.put("/api/user/1/add")
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content(new ObjectMapper().writeValueAsString(newUser))
 				)
-		.andExpect(status().is(201))
+		.andExpect(status().is(200))
 		.andReturn();
 
 		assertThat(repository.count()).isEqualTo(countUserBeforePost);
@@ -150,7 +150,7 @@ public class UserControllerTest {
 	@Test
 	public void deleteUser() throws Exception {
 		mvc.perform(
-					MockMvcRequestBuilders.delete("/user/delete/1")
+					MockMvcRequestBuilders.delete("/api/user/delete/1")
 					)
 			.andExpect(status().is(200))
 			.andReturn();

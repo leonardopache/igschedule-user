@@ -11,6 +11,7 @@ buildscript {
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.11'
+        
     }
 }
 
@@ -19,20 +20,51 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'info.solidsoft.pitest'
-apply plugin: 'jacoco'
+apply plugin: "jacoco"
 
 jar {
 	baseName = 'igschedule'
 	version = '0.0.1-SNAPSHOT'
-
 }
+
 pitest {
-	//targetClasses = ['our.base.package.*']  //by default "${project.group}.*"
-    //pitestVersion = "1.1.0" //not needed when a default PIT version should be used
-    threads = 4
-    outputFormats = ['XML', 'HTML']
+	outputFormats = ['HTML']
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacoco")
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+        		enabled = true
+            	element = 'METHOD'
+            	includes = ['com.pache.igscheduleuser.controller.*']
+
+            	limit {
+            		counter = 'LINE'
+                value = 'TOTALCOUNT'
+                maximum = 6
+            }
+        }
+        rule {
+        		enabled = true
+            	element = 'BUNDLE'
+            	includes = ['com.pache.igscheduleuser.controller.*']
+
+            	limit {
+            		counter = 'COMPLEXITY'
+                value = 'COVEREDRATIO'
+                maximum = 0.6
+            }
+        }
+    }
+}
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -42,7 +74,6 @@ repositories {
 	maven { url "https://repo.spring.io/milestone" }
 }
 
-
 dependencies {
 
 	compile('org.springframework.boot:spring-boot-starter-jersey')
@@ -50,6 +81,8 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.hateoas:spring-hateoas')
+    compile('io.springfox:springfox-swagger2:2.0.2')
+    compile('io.springfox:springfox-swagger-ui:2.0.2')
 	runtime('com.h2database:h2')
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
